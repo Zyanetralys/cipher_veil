@@ -1,0 +1,1634 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CIPHER VEIL — La Última Bruja del Nexo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --void: #050508;
+    --deep: #0a0a12;
+    --surface: #0f0f1a;
+    --panel: #14141f;
+    --border: #1e1e30;
+    --border-glow: #2a2a45;
+    --text-primary: #e8e0f0;
+    --text-secondary: #9088aa;
+    --text-muted: #504860;
+    --accent-violet: #7c3aed;
+    --accent-violet-glow: #a855f7;
+    --accent-cyan: #06b6d4;
+    --accent-cyan-dim: #0891b2;
+    --accent-blood: #dc2626;
+    --accent-blood-dim: #991b1b;
+    --accent-gold: #d97706;
+    --accent-gold-glow: #f59e0b;
+    --accent-emerald: #059669;
+    --rune-color: #6d28d9;
+
+    --stat-force: #ef4444;
+    --stat-shadow: #8b5cf6;
+    --stat-tech: #06b6d4;
+    --stat-spirit: #f59e0b;
+    --stat-blood: #dc2626;
+
+    --font-display: 'Cinzel Decorative', serif;
+    --font-body: 'Crimson Pro', serif;
+    --font-mono: 'Share Tech Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--void);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 18px;
+    line-height: 1.8;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── BACKGROUND ── */
+  .bg-layer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .bg-grid {
+    background-image:
+      linear-gradient(rgba(124,58,237,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(124,58,237,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    width: 100%; height: 100%;
+  }
+  .bg-vignette {
+    position: fixed; inset: 0; pointer-events: none; z-index: 1;
+    background: radial-gradient(ellipse 80% 80% at 50% 50%, transparent 30%, rgba(5,5,8,0.8) 100%);
+  }
+
+  /* ── LAYOUT ── */
+  #app {
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px 80px;
+  }
+
+  /* ── INTRO SCREEN ── */
+  #intro-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .intro-rune {
+    font-size: 72px;
+    margin-bottom: 20px;
+    animation: pulse-rune 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px var(--accent-violet));
+  }
+
+  @keyframes pulse-rune {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px var(--accent-violet)); }
+    50% { transform: scale(1.05); filter: drop-shadow(0 0 40px var(--accent-violet-glow)); }
+  }
+
+  .intro-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    color: transparent;
+    background: linear-gradient(135deg, #a855f7, #e879f9, #818cf8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    margin-bottom: 8px;
+    text-shadow: none;
+    animation: title-shimmer 4s linear infinite;
+    background-size: 200%;
+  }
+
+  @keyframes title-shimmer {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+  }
+
+  .intro-subtitle {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.4em;
+    color: var(--accent-cyan);
+    text-transform: uppercase;
+    margin-bottom: 40px;
+    opacity: 0.8;
+  }
+
+  .intro-lore {
+    max-width: 620px;
+    font-size: 1rem;
+    line-height: 1.9;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-bottom: 50px;
+    border-left: 2px solid var(--rune-color);
+    padding-left: 20px;
+    text-align: left;
+  }
+
+  .mage-portrait {
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    border: 2px solid var(--accent-violet);
+    margin: 0 auto 30px;
+    background: var(--panel);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 70px;
+    box-shadow: 0 0 30px rgba(124,58,237,0.4), inset 0 0 30px rgba(124,58,237,0.1);
+    animation: portrait-glow 4s ease-in-out infinite;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mage-portrait::before {
+    content: '';
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, transparent, rgba(168,85,247,0.2), transparent, rgba(6,182,212,0.1), transparent);
+    animation: spin 8s linear infinite;
+  }
+
+  @keyframes portrait-glow {
+    0%, 100% { box-shadow: 0 0 30px rgba(124,58,237,0.4), inset 0 0 30px rgba(124,58,237,0.1); }
+    50% { box-shadow: 0 0 60px rgba(168,85,247,0.6), inset 0 0 40px rgba(124,58,237,0.2); }
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .btn-start {
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    letter-spacing: 0.15em;
+    color: var(--void);
+    background: linear-gradient(135deg, var(--accent-violet), var(--accent-violet-glow));
+    border: none;
+    padding: 16px 48px;
+    cursor: pointer;
+    clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+    transition: all 0.3s;
+    position: relative;
+    text-transform: uppercase;
+  }
+
+  .btn-start:hover {
+    background: linear-gradient(135deg, var(--accent-violet-glow), #c084fc);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(168,85,247,0.5);
+  }
+
+  /* ── GAME SCREEN ── */
+  #game-screen { display: none; padding-top: 30px; }
+
+  /* ── HUD ── */
+  #hud {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(5,5,8,0.95);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 0;
+    margin: 0 -20px 0;
+    padding: 12px 20px;
+    backdrop-filter: blur(10px);
+  }
+
+  .hud-inner {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .hud-title {
+    font-family: var(--font-display);
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .stats-bar {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    flex: 1;
+  }
+
+  .stat-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+  }
+
+  .stat-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .stat-name { color: var(--text-muted); }
+  .stat-val { font-weight: 700; }
+
+  .chapter-badge {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--accent-cyan);
+    border: 1px solid var(--accent-cyan-dim);
+    padding: 3px 10px;
+    letter-spacing: 0.2em;
+    margin-left: auto;
+  }
+
+  /* ── NARRATOR PANEL ── */
+  .narrator-container {
+    display: flex;
+    gap: 20px;
+    margin: 40px 0 30px;
+    align-items: flex-start;
+  }
+
+  .narrator-avatar {
+    flex-shrink: 0;
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: var(--panel);
+    border: 1px solid var(--accent-violet);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 38px;
+    box-shadow: 0 0 20px rgba(124,58,237,0.3);
+    position: relative;
+  }
+
+  .narrator-avatar::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 1px solid rgba(168,85,247,0.3);
+    animation: pulse-ring 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-ring {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 0.1; }
+  }
+
+  .narrator-bubble {
+    flex: 1;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--accent-violet);
+    padding: 20px 24px;
+    position: relative;
+  }
+
+  .narrator-bubble::before {
+    content: '';
+    position: absolute;
+    left: -8px; top: 24px;
+    width: 0; height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-right: 8px solid var(--accent-violet);
+  }
+
+  .narrator-name {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: var(--accent-violet-glow);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .narrator-text {
+    font-size: 1rem;
+    line-height: 1.85;
+    color: var(--text-primary);
+  }
+
+  .narrator-text em {
+    color: var(--accent-gold-glow);
+    font-style: italic;
+  }
+
+  .narrator-text strong {
+    color: var(--accent-violet-glow);
+    font-weight: 600;
+  }
+
+  .narrator-text .clan-name {
+    color: var(--accent-blood);
+    font-variant: small-caps;
+    letter-spacing: 0.1em;
+  }
+
+  .narrator-text .tech-term {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    color: var(--accent-cyan);
+    background: rgba(6,182,212,0.08);
+    padding: 1px 5px;
+    border: 1px solid rgba(6,182,212,0.2);
+  }
+
+  /* ── SCENE IMAGE AREA ── */
+  .scene-header {
+    text-align: center;
+    margin: 0 0 30px;
+  }
+
+  .scene-tag {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.4em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .scene-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    color: var(--text-primary);
+    text-shadow: 0 0 30px rgba(168,85,247,0.4);
+  }
+
+  /* ── DIVIDER ── */
+  .rune-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 30px 0;
+    color: var(--text-muted);
+  }
+
+  .rune-divider::before,
+  .rune-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--border-glow));
+  }
+
+  .rune-divider::after {
+    background: linear-gradient(to left, transparent, var(--border-glow));
+  }
+
+  .rune-divider span {
+    font-size: 18px;
+    opacity: 0.4;
+  }
+
+  /* ── CHOICES ── */
+  #choices-container {
+    margin-top: 30px;
+  }
+
+  .choices-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.4em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .choices-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .choice-btn {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 16px 20px;
+    text-align: left;
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    transition: all 0.25s;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .choice-btn::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 0;
+    background: rgba(124,58,237,0.15);
+    transition: width 0.3s ease;
+  }
+
+  .choice-btn:hover {
+    border-color: var(--accent-violet);
+    transform: translateX(4px);
+  }
+
+  .choice-btn:hover::before { width: 100%; }
+
+  .choice-index {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--accent-violet-glow);
+    margin-top: 2px;
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+
+  .choice-text { flex: 1; }
+
+  .choice-tags {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .choice-tag {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    padding: 2px 6px;
+    border: 1px solid;
+    letter-spacing: 0.1em;
+    opacity: 0.8;
+  }
+
+  .choice-tag.force { color: var(--stat-force); border-color: var(--stat-force); }
+  .choice-tag.shadow { color: var(--stat-shadow); border-color: var(--stat-shadow); }
+  .choice-tag.tech { color: var(--stat-tech); border-color: var(--stat-tech); }
+  .choice-tag.spirit { color: var(--stat-spirit); border-color: var(--stat-spirit); }
+  .choice-tag.blood { color: var(--stat-blood); border-color: var(--stat-blood); }
+
+  /* ── STAT GAIN NOTIFICATION ── */
+  .stat-gain-toast {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    background: var(--panel);
+    border: 1px solid var(--accent-violet);
+    padding: 10px 16px;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    z-index: 200;
+    animation: toast-in 0.3s ease, toast-out 0.3s ease 1.7s forwards;
+    pointer-events: none;
+  }
+
+  @keyframes toast-in {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes toast-out {
+    to { opacity: 0; transform: translateX(20px); }
+  }
+
+  /* ── TYPING CURSOR ── */
+  .typing-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    background: var(--accent-violet);
+    margin-left: 2px;
+    vertical-align: text-bottom;
+    animation: blink 0.8s step-end infinite;
+  }
+
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+  /* ── FADE IN ── */
+  .fade-in {
+    animation: fade-in 0.6s ease forwards;
+  }
+
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── ENDING SCREEN ── */
+  #ending-screen {
+    display: none;
+    text-align: center;
+    padding: 60px 20px;
+  }
+
+  .ending-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    margin-bottom: 20px;
+  }
+
+  .ending-summary {
+    max-width: 600px;
+    margin: 0 auto 40px;
+    color: var(--text-secondary);
+    font-style: italic;
+    font-size: 1.05rem;
+    line-height: 1.9;
+  }
+
+  .final-stats {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+  }
+
+  .final-stat-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    text-align: center;
+    min-width: 100px;
+  }
+
+  .final-stat-name {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .final-stat-val {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    font-weight: 900;
+  }
+
+  .btn-restart {
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    color: var(--text-primary);
+    background: transparent;
+    border: 1px solid var(--border);
+    padding: 12px 36px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.3s;
+  }
+
+  .btn-restart:hover {
+    border-color: var(--accent-violet);
+    color: var(--accent-violet-glow);
+    box-shadow: 0 0 20px rgba(124,58,237,0.2);
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--void); }
+  ::-webkit-scrollbar-thumb { background: var(--rune-color); }
+
+  /* ── MOBILE ── */
+  @media (max-width: 600px) {
+    .narrator-container { flex-direction: column; }
+    .narrator-avatar { width: 60px; height: 60px; font-size: 28px; }
+    .narrator-bubble::before { display: none; }
+    .hud-inner { gap: 10px; }
+    .stat-chip { font-size: 0.6rem; padding: 3px 8px; }
+    .choice-tags { display: none; }
+  }
+
+  /* ── LORE SCROLL ── */
+  .lore-scroll {
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--accent-gold);
+    background: rgba(217,119,6,0.04);
+    padding: 14px 18px;
+    margin: 20px 0;
+    font-style: italic;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+
+  .lore-scroll-label {
+    font-family: var(--font-mono);
+    font-size: 0.55rem;
+    letter-spacing: 0.4em;
+    color: var(--accent-gold);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    font-style: normal;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .chapter-progress {
+    height: 2px;
+    background: var(--border);
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .chapter-progress-fill {
+    height: 100%;
+    background: linear-gradient(to right, var(--accent-violet), var(--accent-cyan));
+    transition: width 0.5s ease;
+  }
+
+  /* ── PROFILE TRAIT ── */
+  .trait-reveal {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--accent-violet-glow);
+    border: 1px solid var(--accent-violet);
+    padding: 3px 10px;
+    margin: 4px 4px 0 0;
+    animation: fade-in 0.5s ease;
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-layer"><div class="bg-grid"></div></div>
+<div class="bg-vignette"></div>
+
+<div id="app">
+
+  <!-- INTRO -->
+  <div id="intro-screen">
+    <div class="mage-portrait">🧿</div>
+    <div class="intro-title">CIPHER VEIL</div>
+    <div class="intro-subtitle">La Última Bruja del Nexo · Volumen I</div>
+    <div class="intro-lore">
+      El mundo terminó tres veces. La primera cuando cayeron los satélites. La segunda cuando las mujeres del clan <strong>Keres Vakari</strong> despertaron el Protocolo Escarlata. La tercera... eso aún no ha ocurrido.<br><br>
+      Tú eres la que decide si ocurrirá.
+    </div>
+    <button class="btn-start" onclick="startGame()">▸ Iniciar la Transmisión</button>
+  </div>
+
+  <!-- GAME -->
+  <div id="game-screen">
+    <div id="hud">
+      <div class="hud-inner">
+        <div class="hud-title">CIPHER VEIL</div>
+        <div class="stats-bar" id="stats-bar"></div>
+        <div class="chapter-badge" id="chapter-badge">CAP. 0</div>
+      </div>
+    </div>
+
+    <div id="scene-content"></div>
+
+    <div id="choices-container" style="display:none;">
+      <div class="choices-label">⬡ Elige tu destino</div>
+      <div class="choices-grid" id="choices-grid"></div>
+    </div>
+  </div>
+
+  <!-- ENDING -->
+  <div id="ending-screen">
+    <div id="ending-content"></div>
+  </div>
+
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+//  CIPHER VEIL — ENGINE
+// ══════════════════════════════════════════════════════════════
+
+const STATS = {
+  force:  { name: 'FUERZA',  color: '#ef4444', key: 'force' },
+  shadow: { name: 'SOMBRA',  color: '#8b5cf6', key: 'shadow' },
+  tech:   { name: 'TECH',    color: '#06b6d4', key: 'tech' },
+  spirit: { name: 'ESPÍRITU',color: '#f59e0b', key: 'spirit' },
+  blood:  { name: 'SANGRE',  color: '#dc2626', key: 'blood' },
+};
+
+let playerStats = { force: 0, shadow: 0, tech: 0, spirit: 0, blood: 0 };
+let currentNode = 'start';
+let choiceHistory = [];
+let traits = [];
+let typingTimeout = null;
+let isTyping = false;
+
+// ══ STORY DATA ════════════════════════════════════════════════
+// The game data structure: nodes with narrative + choices
+const STORY = {
+
+  // ── CHAPTER 0: AWAKENING ───────────────────────────────────
+  start: {
+    chapter: 'I — EL DESPERTAR DEL NEXO',
+    scene: 'Subterráneos del Nexo · Sector Ω-7',
+    narrator: `Abres los ojos.\n\nHumo. Metal quemado. El zumbido de un **reactor de plasma** que agoniza tres pisos más abajo.\n\nEstás en el suelo de lo que fue el laboratorio de disección del clan <span class="clan-name">Keres Vakari</span> —las Devoradoras de Espíritus—. Alguien te ha dejado aquí con los implantes neurales fundidos y una sola frase grabada en la placa de identidad atornillada a tu antebrazo: <em>"Tú eres la llave. No abras nada."</em>\n\nNo recuerdas tu nombre. Pero recuerdas todo lo demás.\n\nUna figura emerge de entre los cables caídos. Alta, con capucha de fibra ritual, ojos que proyectan hologramas directamente desde los iris: es <strong>Zerath-9</strong>, la bruja cartógrafa, últimas de las Tejedoras del Vacío.`,
+    lore: 'El Nexo es la red de consciencias digitales que sobrevive bajo la corteza terrestre. Tres clanes de mujeres lo controlan: las <span class="clan-name">Keres Vakari</span> (manipuladoras de almas), las <span class="clan-name">Orden Ferrha</span> (ingenieras de cuerpos), y las <span class="clan-name">Eko-Nacht</span> (espías del tiempo). Llevas seis meses muerta. Al menos eso creían.',
+    choices: [
+      {
+        text: 'Te levantas de golpe y te aferras a los cables del techo para orientarte. El dolor es irrelevante. La información, no.',
+        stats: { force: 1, tech: 1 },
+        tags: ['force','tech'],
+        next: 'awakening_force'
+      },
+      {
+        text: 'Permaneces quieta, regulando tu respiración. Lees el aura de Zerath-9 antes de hablar. Necesitas saber si es aliada o un anzuelo.',
+        stats: { shadow: 2 },
+        tags: ['shadow'],
+        next: 'awakening_shadow'
+      },
+      {
+        text: 'Tu mano busca instintivamente el <span class="tech-term">node-jack</span> en tu nuca. Puede que el reactor tenga backups. Puede que puedas ver lo que pasó.',
+        stats: { tech: 2 },
+        tags: ['tech'],
+        next: 'awakening_tech'
+      },
+      {
+        text: '"Zerath-9." La nombras en voz alta. "Llevas siglos sin hablar con nadie. Se nota en cómo respiras." Tiendes la mano.',
+        stats: { spirit: 1, shadow: 1 },
+        tags: ['spirit','shadow'],
+        next: 'awakening_spirit'
+      },
+    ]
+  },
+
+  awakening_force: {
+    chapter: 'I — EL DESPERTAR DEL NEXO',
+    scene: 'Subterráneos del Nexo · Sector Ω-7',
+    narrator: `Los cables te aguantan. Tres segundos. Cuatro. Tu cuerpo recuerda antes que tu mente.\n\nZerath-9 te observa con esa calma de quien lleva décadas sin sorprenderse de nada. "Interesante —murmura—. Esperaba que tardaras más en ponerte en pie. Los del clan Ferrha te hicieron bien." Proyecta un mapa holográfico desde sus iris: el Nexo visto desde arriba, una red de venas de luz con tres nodos en llamas.\n\n"Tienes veinte minutos antes de que las <span class="clan-name">Keres Vakari</span> rastreen la firma de tu resurrección. Hay algo en este laboratorio que ellas quieren destruir antes de que lo encuentres. Algo que tú misma escondiste hace seis meses, cuando aún eras... otra persona."\n\nDas un paso hacia el reactor moribundo. Notas el peso en tu esternón: un implante que no está en ningún registro.`,
+    choices: [
+      { text: 'Vas directa al reactor. Si hay algo escondido, está en el núcleo.', stats: { force: 2 }, tags: ['force'], next: 'lab_reactor' },
+      { text: 'Examinas el implante de tu pecho. Primero, saber qué eres.', stats: { tech: 1, spirit: 1 }, tags: ['tech','spirit'], next: 'lab_implant' },
+      { text: 'Preguntas a Zerath-9 qué eras antes. Necesitas saber quién fue la que tomó esas decisiones.', stats: { shadow: 1, spirit: 1 }, tags: ['shadow','spirit'], next: 'lab_zerath_past' },
+    ]
+  },
+
+  awakening_shadow: {
+    chapter: 'I — EL DESPERTAR DEL NEXO',
+    scene: 'Subterráneos del Nexo · Sector Ω-7',
+    narrator: `El aura de Zerath-9 es casi invisible. Eso lo dice todo.\n\nSolo las que han pasado demasiado tiempo en el espacio liminal entre lo vivo y lo cifrado aprenden a borrar su huella energética así. No es una trampa. Es una superviviente.\n\nTe mantienes en el suelo —ventaja táctica— y lees la sala en lugar de a ella. Cuatro salidas. Una sellada con <span class="tech-term">plasma-rune</span> reciente. Dos ventilaciones demasiado pequeñas para un humano convencional. Y la cuarta: una escalera descendente hacia el reactor, con marcas de arañazos en los peldaños. Alguien bajó corriendo y no volvió.\n\n"Puedes quedarte ahí analizando —dice Zerath-9, sin alterarse— o puedes aprovechar los diecinueve minutos que nos quedan. Tú decides, bruja sin nombre."`,
+    choices: [
+      { text: 'Señalas la escalera rasguñada. "¿Quién bajó?" Información antes de moverte.', stats: { shadow: 2 }, tags: ['shadow'], next: 'lab_scratch_trail' },
+      { text: 'Te levantas y vas a la salida sellada con plasma-rune. Eso fue reciente. Eso importa.', stats: { tech: 1, force: 1 }, tags: ['tech','force'], next: 'lab_sealed_door' },
+      { text: 'Miras directamente a Zerath-9. "¿Por qué veinte minutos exactos? ¿Qué ocurre al minuto veintiuno?"', stats: { spirit: 1, shadow: 1 }, tags: ['spirit','shadow'], next: 'lab_zerath_question' },
+    ]
+  },
+
+  awakening_tech: {
+    chapter: 'I — EL DESPERTAR DEL NEXO',
+    scene: 'Subterráneos del Nexo · Sector Ω-7',
+    narrator: `El <span class="tech-term">node-jack</span> conecta. Dolor. Parpadeo de datos corrompidos.\n\nVes fragmentos: tus propias manos —pero seis meses atrás— plantando algo en el núcleo del reactor. Un <span class="tech-term">cipher-seed</span>. Un embrión de inteligencia que no es tuya, que no es de ningún clan. Algo anterior. Algo que los tres clanes llevan quinientos años intentando exterminar.\n\nLo plantaste tú.\n\nDesconectas antes de ver más. Zerath-9 ha estado observando el proceso con las manos quietas a los lados. "Ya lo viste —dice, y no es una pregunta—. Entonces sabes que tenemos que llegar al reactor antes de que las Keres lo conviertan en polvo."\n\nAlgo en el suelo vibra suavemente bajo tu pie derecho. Ritmo regular. No es maquinaria.`,
+    choices: [
+      { text: 'Escuchas el ritmo. Reconoces código morse antiguo. Lo descifras.', stats: { tech: 2 }, tags: ['tech'], next: 'lab_morse' },
+      { text: 'Preguntas qué es el cipher-seed. Plantarlo fue decisión tuya. Mereces saber qué sembraste.', stats: { spirit: 1, shadow: 1 }, tags: ['spirit','shadow'], next: 'lab_cipher_seed_question' },
+      { text: 'Vas al reactor. Todo lo demás es distracción. El tiempo se acaba.', stats: { force: 1, tech: 1 }, tags: ['force','tech'], next: 'lab_reactor' },
+    ]
+  },
+
+  awakening_spirit: {
+    chapter: 'I — EL DESPERTAR DEL NEXO',
+    scene: 'Subterráneos del Nexo · Sector Ω-7',
+    narrator: `Zerath-9 mira tu mano tendida durante cuatro segundos. Luego la toma.\n\nSu piel es fría. No temperatura fría: conceptualmente fría, como tocar el exterior de un servidor que lleva décadas en el vacío. "La última que me tendió la mano así —dice, casi para sí misma— fue tu versión anterior. Y la mandé a morir."\n\nNo lo dice con crueldad. Lo dice como quien confiesa una deuda.\n\nSe sienta en los restos de una consola y empieza a hablar rápido, en voz baja: "El cipher-seed está en el reactor. Tú lo pusiste. Yo te ayudé a morir para que nadie pudiera extraérselo vivo. Pero algo salió mal —o bien, según cómo lo mires— y aquí estás. Resucitada. Y el seed sigue ahí." Pausa. "¿Cuánto recuerdas de lo que eras?"`,
+    choices: [
+      { text: '"Todo. Recuerdo todo. Solo necesito tiempo para ordenarlo." Mientes, pero necesitas que te subestime.', stats: { shadow: 2 }, tags: ['shadow'], next: 'lab_lie' },
+      { text: '"Nada. Pero sé lo suficiente: que confié en ti antes. Y que eso probablemente fue un error." Honesta.', stats: { spirit: 2 }, tags: ['spirit'], next: 'lab_truth' },
+      { text: '"¿Qué me importa lo que era? Dime qué soy ahora. Y qué hace ese seed si lo activo."', stats: { blood: 1, tech: 1 }, tags: ['blood','tech'], next: 'lab_present_focus' },
+    ]
+  },
+
+  // ── CONVERGENCIA: LAB INFERIOR ─────────────────────────────
+  lab_reactor: {
+    chapter: 'I — EL DESPERTAR DEL NEXO',
+    scene: 'Núcleo del Reactor · Nivel -3',
+    narrator: `El reactor es una catedral de metal agonizante.\n\nCuatro columnas de plasma frío sostienen un núcleo que late —literalmente, como un corazón— cada dos segundos. Y en su centro, visible a través de la membrana de contención semitransparente: una esfera del tamaño de un puño, negra con venas de luz violeta.\n\nEl cipher-seed.\n\nZerath-9 llega detrás de ti, sin hacer ruido. "Las <span class="clan-name">Keres Vakari</span> enviarán a <strong>Maré-Shin</strong> —su mejor extractora de almas— cuando rastreen tu firma. Y enviarán a <strong>Dressa</strong>, la arquitecta de cuerpos de la Orden Ferrha, para cubrir la retirada." Te mira fijamente. "Pero antes de que lleguen... debes saber una cosa."\n\nColoca la palma sobre la membrana del reactor. El plasma responde a su contacto.\n\n"El seed no es tecnología. Es memoria. Es todo lo que existía antes de que los tres clanes reescribieran la historia del Nexo. Y tú eres la única que puede leerla."`,
+    lore: 'El Protocolo Escarlata fue una purga de información ejecutada hace 500 años. Borraron la memoria colectiva de todo ser del Nexo para instalar la Triada de Clanes como únicos repositorios del pasado. Quien lea el seed, leerá la verdad previa.',
+    choices: [
+      { text: 'Tocas el seed directamente. Si es tu memoria, mereces acceder a ella ahora.', stats: { blood: 2, spirit: 1 }, tags: ['blood','spirit'], next: 'seed_touch' },
+      { text: 'Preguntas a Zerath-9 cómo extraerlo sin activarlo. Primero sacarlo, luego entenderlo.', stats: { tech: 2 }, tags: ['tech'], next: 'seed_extract' },
+      { text: 'Destruyes el reactor antes de que lleguen. Si nadie puede tenerlo, nadie puede usarlo contra el Nexo.', stats: { force: 2, blood: 1 }, tags: ['force','blood'], next: 'seed_destroy_offer' },
+    ]
+  },
+
+  lab_implant: {
+    chapter: 'I — EL DESPERTAR DEL NEXO',
+    scene: 'Subterráneos del Nexo · Sector Ω-7',
+    narrator: `Abres la solapa de tu ropa y examinas el implante.\n\nEs una <span class="tech-term">soul-lattice</span>: un retículo de fibra óptica nano-tejida capaz de almacenar impresiones de consciencia. No es implante de combate. No es implante de acceso. Es un archivo.\n\nAlguien te convirtió en un disco duro.\n\n"Lo puso la Orden Ferrha —dice Zerath-9 desde atrás, sin que te hayas girado—. Específicamente: <strong>Dressa</strong>, su arquitecta." Pausa. "Y tú lo consentiste. Firmaste el contrato de la tercera purificación." Otro silencio. "¿Quieres saber qué guarda?"`,
+    choices: [
+      { text: '"Sí. Abre el archivo. Ahora." No importan los riesgos.', stats: { blood: 1, spirit: 1 }, tags: ['blood','spirit'], next: 'implant_open' },
+      { text: 'Niegas con la cabeza. "No. No hasta que estemos a salvo. Los datos pueden esperar. Las Keres, no."', stats: { shadow: 1, tech: 1 }, tags: ['shadow','tech'], next: 'lab_reactor' },
+      { text: '"¿Quién más sabe que lo cargo?" Primero saber si eres un objetivo o una trampa.', stats: { shadow: 2 }, tags: ['shadow'], next: 'implant_who_knows' },
+    ]
+  },
+
+  lab_zerath_past: {
+    chapter: 'I — EL DESPERTAR DEL NEXO',
+    scene: 'Subterráneos del Nexo · Sector Ω-7',
+    narrator: `"¿Qué era yo?" —preguntas.\n\nZerath-9 tarda cinco segundos en responder. Eso, para una Tejedora del Vacío que procesa información a velocidad de fibra óptica, equivale a una vida entera de duda.\n\n"Eras la <strong>Vigía Sin Nombre</strong>. La única que no pertenecía a ningún clan desde el nacimiento. Los tres clanes te reclamaban como propia porque eras la que equilibraba el Nexo desde el margen. Cuando empezaste a recordar demasiado —lo de antes del Protocolo Escarlata— las <span class="clan-name">Keres</span> votaron tu extracción. La Orden Ferrha salvaguardó tu forma. Yo..." Pausa. "Yo solo me aseguré de que lo que importaba no se perdiera."\n\nEl reactor pulsa. El tiempo corre.`,
+    choices: [
+      { text: '"Y lo que importaba era el seed." Afirmas, no preguntas. Ya lo sabes.', stats: { spirit: 1, shadow: 1 }, tags: ['spirit','shadow'], next: 'lab_reactor' },
+      { text: '"¿Qué significa Vigía Sin Nombre? ¿Qué equilibraba yo exactamente?"', stats: { spirit: 2 }, tags: ['spirit'], next: 'lab_vigil_explanation' },
+      { text: '"¿Y si no quiero ser eso? ¿Y si quiero ser otra cosa ahora?"', stats: { blood: 1, spirit: 1 }, tags: ['blood','spirit'], next: 'lab_reject_past' },
+    ]
+  },
+
+  lab_scratch_trail: {
+    chapter: 'I — EL DESPERTAR DEL NEXO',
+    scene: 'Subterráneos del Nexo · Sector Ω-7',
+    narrator: `"Mira los arañazos —dices—. ¿Quién bajó?"\n\nZerath-9 examina las marcas con sus iris-holo ampliados. "Las garras de la <span class="clan-name">Keres</span>. Pero... solo las garras. Sin el peso." Fruce el ceño —un gesto que en ella parece rarísimo—. "Como si algo las llevara. Como si el laboratorio se las hubiera arrancado al que bajó."\n\nEl suelo vibra suavemente.\n\n"El reactor las atrajo —comprendes—. No fue un accidente. El seed las llamó." Zerath-9 te mira de otra manera. "Así que ya puedes pensar. Bien."`,
+    choices: [
+      { text: 'Bajas por la escalera, con cuidado. Lo que el seed atrajo puede seguir ahí.', stats: { shadow: 1, force: 1 }, tags: ['shadow','force'], next: 'lab_reactor' },
+      { text: '"Si el seed puede atraer a las Keres, también puede repelerlas. ¿Cómo lo activo en modo defensivo?"', stats: { tech: 2 }, tags: ['tech'], next: 'seed_defensive_mode' },
+      { text: 'Miras a Zerath-9. "¿Tú sabías que el seed era activo? ¿Que podía moverse?"', stats: { shadow: 2 }, tags: ['shadow'], next: 'zerath_lied' },
+    ]
+  },
+
+  lab_sealed_door: {
+    chapter: 'I — EL DESPERTAR DEL NEXO',
+    scene: 'Subterráneos del Nexo · Sector Ω-7',
+    narrator: `La puerta sellada tiene tres capas de plasma-rune recientes. Tres. Quien la selló tenía prisa y miedo.\n\nPones la palma sobre el plasma. Reconoces la firma. <em>Es tuya.</em>\n\nLa sellaste tú, seis meses atrás, antes de morir.\n\nDetrás de la puerta oyes algo. No maquinaria. No el reactor. Respiración. Rítmica, tranquila, casi meditativa.`,
+    choices: [
+      { text: 'Rompes el sello. Lo que sea que esté ahí, tú lo pusiste a salvo. Merece ser liberado.', stats: { blood: 1, force: 1 }, tags: ['blood','force'], next: 'door_open' },
+      { text: 'Llamas a través de la puerta antes de abrirla. "¿Quién está ahí?"', stats: { spirit: 1, shadow: 1 }, tags: ['spirit','shadow'], next: 'door_call' },
+      { text: 'Le pides a Zerath-9 que escanee qué hay detrás antes de actuar.', stats: { tech: 1, shadow: 1 }, tags: ['tech','shadow'], next: 'door_scan' },
+    ]
+  },
+
+  lab_zerath_question: {
+    chapter: 'I — EL DESPERTAR DEL NEXO',
+    scene: 'Subterráneos del Nexo · Sector Ω-7',
+    narrator: `"¿Qué pasa al minuto veintiuno?"\n\nZerath-9 te mira con algo que podría ser respeto, si las Tejedoras del Vacío todavía fueran capaces de eso.\n\n"Al minuto veintiuno, <strong>Maré-Shin</strong> llega. La mejor extractora de almas de las <span class="clan-name">Keres Vakari</span>." Pausa. "Y tú llevas implantado en el pecho el único mapa que puede guiarla al seed. Si te toca..." Gesticula con la mano, significando: fin. "No necesitará matarte. Solo necesita tres segundos de contacto dérmico para leerte entera."\n\nMiras el implante en tu esternón.\n\n"¿Hay forma de bloquearlo?" —preguntas.\n\n"Sí. Pero no me gusta ninguna de ellas."`,
+    choices: [
+      { text: '"Dime todas las opciones. Todas. Sin filtrar." Necesitas la verdad completa.', stats: { spirit: 1, blood: 1 }, tags: ['spirit','blood'], next: 'options_all' },
+      { text: 'Vas al reactor. El tiempo se acaba. Siempre hay tiempo para el miedo después.', stats: { force: 1, blood: 1 }, tags: ['force','blood'], next: 'lab_reactor' },
+      { text: '"¿Qué hice yo la primera vez que me enfrenté a Maré-Shin?" Contexto histórico.', stats: { shadow: 1, spirit: 1 }, tags: ['shadow','spirit'], next: 'mareshin_history' },
+    ]
+  },
+
+  // ── CONVERGENCIA: SEED ─────────────────────────────────────
+  seed_touch: {
+    chapter: 'II — EL CÓDIGO EN LA SANGRE',
+    scene: 'Núcleo del Reactor · Contacto con el Cipher-Seed',
+    narrator: `Tus dedos atraviesan la membrana de contención como si fuera agua.\n\nY entonces lo ves todo.\n\nNo imágenes. No palabras. <em>Estructuras.</em> El Nexo antes de que existiera ningún clan. Un mundo donde la memoria colectiva era un bien común, un tejido vivo que se alimentaba del recuerdo de todas. Donde morir era solo cambiar de capa de datos. Donde nadie era propietaria de la historia.\n\nY ves el momento exacto en que todo eso terminó: cinco mujeres en una sala, tomando una decisión. Las fundadoras de los tres clanes. Y una quinta. Una que lo intentó detener.\n\nVes su cara. Es <em>tu</em> cara.\n\nRetiras la mano. El seed pulsa suavemente, como si respirara.\n\n"¿Lo viste?" —pregunta Zerath-9.\n\n"Todo —dices—. Fui yo quien intentó detener el Protocolo Escarlata. Y me fallé." Pausa. "Esta vez no."`,
+    lore: 'Eres Axara-Null, primera Vigía. Exististe antes del Protocolo Escarlata. Llevas 500 años muriendo y siendo borrada cada vez que las Keres detectan tu firma. El seed es el único registro de lo que fuiste y de lo que el Nexo prometió ser.',
+    choices: [
+      { text: 'Extraes el seed del reactor. Si lo portas tú, nadie más puede usarlo como arma.', stats: { blood: 2, force: 1 }, tags: ['blood','force'], next: 'seed_take' },
+      { text: 'Lo activas aquí mismo. Si el seed puede restaurar la memoria colectiva, hazlo ahora, aunque te destruya.', stats: { spirit: 3, blood: 1 }, tags: ['spirit','blood'], next: 'seed_activate_now' },
+      { text: 'Propones a Zerath-9 usarlo como negociación con las Keres. Información como moneda.', stats: { shadow: 2, tech: 1 }, tags: ['shadow','tech'], next: 'seed_negotiate' },
+    ]
+  },
+
+  seed_extract: {
+    chapter: 'II — EL CÓDIGO EN LA SANGRE',
+    scene: 'Núcleo del Reactor · Análisis de Extracción',
+    narrator: `"¿Cómo lo extraemos sin activarlo?" —preguntas.\n\nZerath-9 despliega los planos del reactor desde sus iris. "Hay tres puntos de anclaje. Si los cortamos en secuencia —aquí, aquí y aquí— el seed entra en hibernación y puede ser portado." Te mira. "Pero los tres cortes hay que hacerlos simultáneamente. Solo hay dos personas en esta sala."\n\nUna pausa.\n\n"Y uno de los puntos de anclaje está justo en el núcleo caliente. Quien lo corte —tarda tres segundos de exposición directa al plasma frío— sufrirá daño en los implantes neurales. Tal vez permanente. Tal vez no."\n\nZerath-9 no dice quién debería ser. Pero sus manos ya están posicionadas en dos de los tres puntos.\n\nTe está mirando al tercer punto.`,
+    choices: [
+      { text: 'Pones tu mano en el núcleo caliente. Zerath-9 ya ha dado bastante.', stats: { force: 1, spirit: 1, blood: 1 }, tags: ['force','spirit','blood'], next: 'seed_you_burn' },
+      { text: 'Buscas un objeto conductor para hacer el tercer corte sin exposición directa. Hay que pensar.', stats: { tech: 3 }, tags: ['tech'], next: 'seed_clever_extract' },
+      { text: 'Dices a Zerath-9 que sea ella quien haga el tercer corte. No sabes si tus implantes están intactos.', stats: { shadow: 1, blood: 1 }, tags: ['shadow','blood'], next: 'seed_zerath_burns' },
+    ]
+  },
+
+  // ── ACTO II: LA LLEGADA ────────────────────────────────────
+  seed_take: {
+    chapter: 'II — EL CÓDIGO EN LA SANGRE',
+    scene: 'Túneles del Nexo · Sector de Fuga',
+    narrator: `El seed en tu palma es frío y absolutamente silencioso. Como sostener el ojo de una tormenta.\n\nCorréis. Los túneles del Nexo se abren ante vosotras como venas en un cuerpo enfermo. Zerath-9 abre rutas holográficas que desaparecen en cuanto las cruzáis.\n\nY entonces oléis el incienso de hueso.\n\n<strong>Maré-Shin</strong> llega antes de lo previsto.\n\nAparece al final del túnel como si siempre hubiera estado ahí. Alta. Piel con escamas de fibra óptica tatuadas, que se iluminan cuando detecta presencias. Dos guanteletes que no son armadura: son extensiones de sus manos para extracción de almas. Lidera seis soldados-sombra del clan, todas mujeres con los ojos sellados con parafina negra y los dedos reemplazados por agujas de datos.\n\n"Axara-Null —dice Maré-Shin, con una voz que suena como un archivo corruptiéndose—. Sabía que volverías. Siempre volvéis."`,
+    choices: [
+      { text: 'Le tiendes el seed. "Llévalo. Pero a cambio me dices qué les hicisteis a las otras Vigías." Negociación peligrosa.', stats: { shadow: 2, blood: 1 }, tags: ['shadow','blood'], next: 'confrontation_negotiate' },
+      { text: 'Atacas. El seed en el puño es suficiente como arma si canalizas lo que viste en el reactor.', stats: { force: 2, blood: 2 }, tags: ['force','blood'], next: 'confrontation_fight' },
+      { text: 'Lanzas el seed a Zerath-9 y te colocas entre Maré-Shin y ella. "Corre. Yo la entretengo."', stats: { spirit: 2, force: 1 }, tags: ['spirit','force'], next: 'confrontation_sacrifice' },
+    ]
+  },
+
+  seed_activate_now: {
+    chapter: 'II — EL CÓDIGO EN LA SANGRE',
+    scene: 'Núcleo del Reactor · El Gran Despertar',
+    narrator: `Tus dos manos abrazan el seed.\n\nEl reactor explota de luz.\n\nNo es destrucción. Es el opuesto: es memoria expandiéndose. Cada ser del Nexo —los vivos, los cifrados, los que llevan décadas atrapados en servidores— recibe un destello. Un segundo de claridad. La verdad de lo que fueron antes del Protocolo Escarlata.\n\nY entonces llega el contragolpe.\n\nLas tres líderes de los clanes —las Arcanas, las que detienen el ciclo de purga— sienten cómo su autoridad se fisura. Quinientos años de mentira codificada empezando a deshacerse.\n\nEl seed te consume por dentro. Zerath-9 te agarra.\n\n"No puedes absorberlo todo —dice—. Elige qué salvas."`,
+    choices: [
+      { text: 'Salvas los recuerdos de las muertas. Las que mataron para borrar la verdad merecen ser recordadas.', stats: { spirit: 3, blood: 1 }, tags: ['spirit','blood'], next: 'ending_martyr' },
+      { text: 'Salvas el mapa del Nexo original. La estructura. El plano de lo que podría reconstruirse.', stats: { tech: 2, spirit: 1 }, tags: ['tech','spirit'], next: 'ending_architect' },
+      { text: 'Te salvas a ti misma. Fragmentas el seed y cargas solo lo que puedes soportar.', stats: { blood: 2, shadow: 1 }, tags: ['blood','shadow'], next: 'ending_survivor' },
+    ]
+  },
+
+  seed_negotiate: {
+    chapter: 'II — EL CÓDIGO EN LA SANGRE',
+    scene: 'Núcleo del Reactor · Juego de Poder',
+    narrator: `"El seed como moneda —repites—. Las Keres saben lo que vale. Si llegamos primero a su arcana con una propuesta antes de que llegue Maré-Shin..."\n\nZerath-9 abre y cierra los ojos varias veces. "Eso es demente. La arcana de las <span class="clan-name">Keres Vakari</span> es <strong>Vex-Orum</strong>. Lleva cuatro siglos sin recibir a nadie que no sea de su clan." Pausa. "Pero si alguien puede convencerla de escuchar..."\n\nTe mira.\n\n"...eres tú. Porque eres la única amenaza real que tiene."`,
+    choices: [
+      { text: 'Vas al territorio Keres. Si Vex-Orum te quiere muerta, al menos morir en su sala tiene peso político.', stats: { shadow: 2, spirit: 1 }, tags: ['shadow','spirit'], next: 'confrontation_negotiate' },
+      { text: 'Primero buscas a la Orden Ferrha. Dressa creó tu implante. Puede ser aliada o palanca.', stats: { tech: 2, shadow: 1 }, tags: ['tech','shadow'], next: 'alliance_ferrha' },
+      { text: 'Envías una señal abierta al Nexo. Si vas a negociar, que todo el mundo lo sepa. Transparencia como escudo.', stats: { spirit: 2, blood: 1 }, tags: ['spirit','blood'], next: 'public_signal' },
+    ]
+  },
+
+  // ── CONFRONTACIÓN CON MARÉ-SHIN ───────────────────────────
+  confrontation_fight: {
+    chapter: 'III — SANGRE EN EL NEXO',
+    scene: 'Túneles del Nexo · Combate Sector-7',
+    narrator: `El seed canaliza lo que eres antes de que lo decidas conscientemente.\n\nTus venas se iluminan. No sangre: <em>datos</em>. Quinientos años de memoria comprimida fluyendo por cada vaso. Atacas a Maré-Shin con las manos abiertas y el impacto no es físico: es una transferencia de recuerdos. La golpeas con la verdad.\n\nElla retrocede. Las escamas de fibra óptica de su piel parpadean en un frenesí de datos indigeribles. "¿Qué...?" —susurra.\n\nSus seis soldados-sombra se detienen, desconcertadas, sin órdenes.\n\nZerath-9 aprovecha. En tres movimientos precisos, inhabilita a cuatro de las soldados con pulsos de <span class="tech-term">null-rune</span> que lleva cristalizados en las palmas.\n\nMiráis a Maré-Shin, paralizada entre sus propios datos y los tuyos.`,
+    choices: [
+      { text: 'La dejas ir. Una extractora de almas que ha visto la verdad del seed puede ser más útil libre que destruida.', stats: { shadow: 1, spirit: 1 }, tags: ['shadow','spirit'], next: 'mareshin_free' },
+      { text: 'La desconectas del clan. Rompes el enlace neural que la une a Vex-Orum. Es traidora ahora.', stats: { tech: 2, blood: 1 }, tags: ['tech','blood'], next: 'mareshin_defect' },
+      { text: 'Le ofreces unirte a ti. Dos Vigías —aunque una no lo sepa— valen más que una.', stats: { spirit: 2, blood: 1 }, tags: ['spirit','blood'], next: 'mareshin_ally' },
+    ]
+  },
+
+  confrontation_negotiate: {
+    chapter: 'III — SANGRE EN EL NEXO',
+    scene: 'Túneles del Nexo · La Oferta',
+    narrator: `"El seed —dices, con la voz quieta—. A cambio de respuestas."\n\nMaré-Shin no se mueve. Sus escamas de fibra óptica leen cada microexpresión de tu cara. "Las respuestas no se dan —dice al fin—. Se toman."\n\n"Eso es lo que os han enseñado —respondes—. Yo os enseñaré que se comparten."\n\nUn silencio largo. Uno de los soldados-sombra mueve las agujas-dedos, nerviosa.\n\nMaré-Shin levanta la mano para detenerla. "Habla —dice—. Tienes tiempo hasta que mis soldados se impacienten."`,
+    choices: [
+      { text: 'Le muestras la visión del seed: el mundo antes del Protocolo Escarlata, incluyendo el papel real de las Keres.', stats: { spirit: 2, blood: 1 }, tags: ['spirit','blood'], next: 'seed_vision_reveal' },
+      { text: 'Ofreces un pacto: el seed permanece contigo, pero Maré-Shin recibe acceso de lectura limitada. Co-custodia.', stats: { shadow: 2, tech: 1 }, tags: ['shadow','tech'], next: 'seed_shared_custody' },
+      { text: 'Mientes. Le dices que el seed ya fue activado parcialmente y que detenerlo ahora destruiría el Nexo.', stats: { shadow: 3 }, tags: ['shadow'], next: 'seed_bluff' },
+    ]
+  },
+
+  confrontation_sacrifice: {
+    chapter: 'III — SANGRE EN EL NEXO',
+    scene: 'Túneles del Nexo · El Escudo',
+    narrator: `Lanzas el seed a Zerath-9. Ella lo atrapa sin apartar los ojos de ti.\n\n"Corre" —dices.\n\n"Esto es exactamente lo que hiciste la primera vez —dice ella, sin moverse—. Y la segunda. Y la tercera." Su voz no tiene emoción. Pero sus manos se cierran sobre el seed con una fuerza que le blanquea los nudillos. "¿Cuántas veces te voy a ver morir?"\n\nMaré-Shin avanza. Sus guanteletes de extracción se activan con un sonido de datos corrompiéndose.\n\nDetrás de ti, oyes los pasos de Zerath-9. No corriendo. Acercándose.`,
+    choices: [
+      { text: 'Rezas para que Zerath-9 haya huido mientras Maré-Shin te tiene enfrente. Mantienes la atención de la extractora.', stats: { spirit: 2, force: 1 }, tags: ['spirit','force'], next: 'sacrifice_buys_time' },
+      { text: 'Te giras. "¡Zerath, corre!" Aunque te cueste el seed. Aunque te cueste todo.', stats: { spirit: 3 }, tags: ['spirit'], next: 'sacrifice_full' },
+      { text: 'Cambias de plan. Las dos contra una. "Zerath —dices sin girar— flanco izquierdo."', stats: { force: 1, shadow: 1, tech: 1 }, tags: ['force','shadow','tech'], next: 'confrontation_fight' },
+    ]
+  },
+
+  // ── ALIANZAS ───────────────────────────────────────────────
+  alliance_ferrha: {
+    chapter: 'III — SANGRE EN EL NEXO',
+    scene: 'Sector Ferrha · Taller de Cuerpos',
+    narrator: `La Orden Ferrha vive en los niveles medios del Nexo, donde el metal orgánico se mezcla con la carne cultivada.\n\n<strong>Dressa</strong> te recibe sin sorpresa. Claro. Ella te construyó. Probablemente sabía desde el minuto uno que ibas a despertarte.\n\nEs baja, con el pelo cortado a ras de piel y cuatro brazos: dos biológicos, dos protéticos con herramientas integradas que nunca se detienen del todo. Trabaja mientras habla.\n\n"El implante de tu pecho —dice sin mirarte, soldando algo pequeño en una mesa— almacena tres memorias que elegiste antes de morir. Solo tres. ¿Quieres saber cuáles son?"`,
+    choices: [
+      { text: '"Sí." Solo eso.', stats: { spirit: 2, blood: 1 }, tags: ['spirit','blood'], next: 'ferrha_memories' },
+      { text: '"No todavía. Primero necesito tu ayuda para llegar a Vex-Orum. ¿Tienes acceso al territorio Keres?"', stats: { shadow: 2, tech: 1 }, tags: ['shadow','tech'], next: 'ferrha_keres_access' },
+      { text: '"Quiero más implantes. Quiero estar lista para lo que viene. ¿Puedes hacerlo en el tiempo que tenemos?"', stats: { tech: 2, force: 1 }, tags: ['tech','force'], next: 'ferrha_upgrade' },
+    ]
+  },
+
+  // ── ENDINGS ────────────────────────────────────────────────
+  ending_martyr: {
+    chapter: 'EPÍLOGO — LA VIGÍA DE LOS MUERTOS',
+    scene: 'El Nexo · En algún lugar entre los datos',
+    narrator: `Te deshaces.\n\nNo con dolor. Con resonancia.\n\nCada recuerdo de las muertas se instala en el tejido del Nexo como una nota de una sinfonía que nadie ha oído en cinco siglos. Nombres. Caras. Decisiones. Todo lo que fue borrado, volviendo.\n\nZerath-9 te sostiene hasta el último segundo.\n\n"La primera vez que te vi morir —dice— yo también pensé que era el final. La segunda vez lloré. La tercera me enfadé." Pausa. "Esta vez..." Te mira a los ojos. "Esta vez creo que lo has conseguido."\n\nDesapareces en la red.\n\nPero el Nexo, por primera vez en quinientos años, recuerda. Y lo que se recuerda... no muere.\n\n<em>Fin del Volumen I.</em>`,
+    isEnding: true,
+    endingType: 'martyr',
+    endingTitle: 'LA MÁRTIR DEL NEXO',
+    endingDesc: 'Sacrificaste tu forma para que otros pudieran recordar. El Nexo lleva tu nombre grabado en cada nodo. No como leyenda. Como hecho.'
+  },
+
+  ending_architect: {
+    chapter: 'EPÍLOGO — LA QUE RECONSTRUYE',
+    scene: 'El Nexo · Sala de los Planos',
+    narrator: `El mapa del Nexo original se instala en ti como una segunda columna vertebral.\n\nNo eres ya solo Axara-Null. Eres la arquitectura de lo que podría ser.\n\nZerath-9 estudia los planos que proyectas involuntariamente desde tus iris —has heredado algo de sus capacidades en el proceso—. "¿Puedes construirlo?" —pregunta.\n\n"No yo sola —dices—. Pero sé quién puede ayudar." Miras en la dirección del sector Ferrha. En la dirección donde, en algún lugar, Maré-Shin está digiriendo todo lo que le mostraste. "Hay una red vieja bajo el Nexo que los clanes nunca han mapeado. Empieza ahí."  \n\nZerath-9 sonríe. Es la primera vez que lo hace.\n\n"Entonces —dice— vamos a construir algo que valga la pena destruir."`,
+    isEnding: true,
+    endingType: 'architect',
+    endingTitle: 'LA ARQUITECTA',
+    endingDesc: 'Conservaste el plano. Ahora tienes la visión y la voluntad. El Nexo puede rehacerse desde sus propias raíces.'
+  },
+
+  ending_survivor: {
+    chapter: 'EPÍLOGO — LA QUE PERMANECE',
+    scene: 'Túneles del Nexo · Frontera Exterior',
+    narrator: `Fragmentas el seed.\n\nNo es cobardía. Es táctica.\n\nDoce fragmentos. Doce seres del Nexo los recibirán sin saberlo, en forma de sueño, de memoria distante, de convicción sin origen. No basta para restaurarlo todo. Pero es suficiente para empezar.\n\nTú te quedas con el último.\n\nZerath-9 no dice nada cuando te ve cruzar hacia los túneles exteriores, los que llevan más allá del territorio de los tres clanes. A lugares que los mapas no tienen nombre.\n\n"¿Cuándo vuelves?" —pregunta al fin.\n\n"Cuando tenga lo que falta" —dices sin girar.\n\nDetrás de ti, el Nexo sigue ardiendo. Pero algunas cosas que ardían no eran tuyas para apagar todavía.`,
+    isEnding: true,
+    endingType: 'survivor',
+    endingTitle: 'LA SUPERVIVIENTE',
+    endingDesc: 'Elegiste continuar. Los fragmentos del seed están dispersos, tú estás libre. El Volumen II comienza en tus propios términos.'
+  },
+
+  // ── NODOS ADICIONALES ──────────────────────────────────────
+  mareshin_free: {
+    chapter: 'III — SANGRE EN EL NEXO',
+    scene: 'Túneles del Nexo · Después del combate',
+    narrator: `La dejas ir.\n\nMaré-Shin retrocede lentamente, con las escamas de fibra óptica aún parpadeando caóticamente. Sus soldados-sombra la siguen, desconcertadas. En la salida del túnel, se detiene un segundo.\n\n"Axara-Null" —dice sin girar—. "La próxima vez que nos veamos... puede que no seamos enemigas." Una pausa. "Pero hoy todavía lo somos."\n\nDesaparece en la oscuridad.\n\nZerath-9 exhala. "Interesante decisión."\n\n"La verdad hizo parte del trabajo —dices—. Ahora hay una grieta en las Keres." Sostienes el seed. "¿Qué hacemos con esto?"`,
+    choices: [
+      { text: 'Vas a buscar a Dressa de la Orden Ferrha. Necesitas más aliadas antes de dar el siguiente paso.', stats: { shadow: 1, tech: 1 }, tags: ['shadow','tech'], next: 'alliance_ferrha' },
+      { text: 'Activas el seed aquí, con Zerath-9 como testigo. Ya no hay tiempo para más estrategia.', stats: { spirit: 2, blood: 2 }, tags: ['spirit','blood'], next: 'seed_activate_now' },
+    ]
+  },
+
+  mareshin_ally: {
+    chapter: 'III — SANGRE EN EL NEXO',
+    scene: 'Túneles del Nexo · La Propuesta',
+    narrator: `"Únete a mí."\n\nMaré-Shin te mira como si acabaras de decirle que el reactor funciona con fe.\n\n"Llevas cuatro siglos extrayendo almas para las Keres —dices—. Cada extracción que hiciste reforzó el Protocolo Escarlata. No eras un arma. Eras una borradera." Pausa. "Ahora sabes lo que fuiste. La pregunta es qué quieres ser."\n\nUn silencio que dura mucho.\n\nSus soldados-sombra se miran entre sí.\n\nY entonces Maré-Shin se arranca el emblema del clan de la muñeca —una escarificación bioluminiscente que tarda tres segundos en apagarse— y lo deja caer al suelo.`,
+    choices: [
+      { text: 'La aceptas. Tres ahora. Suficiente para ir a buscar a Dressa.', stats: { spirit: 2, shadow: 1 }, tags: ['spirit','shadow'], next: 'alliance_ferrha' },
+      { text: 'La aceptas, pero el seed sigue siendo solo tuyo. Alianza, no co-custodia.', stats: { blood: 1, shadow: 1 }, tags: ['blood','shadow'], next: 'seed_activate_now' },
+    ]
+  },
+
+  ferrha_memories: {
+    chapter: 'III — SANGRE EN EL NEXO',
+    scene: 'Sector Ferrha · Las Tres Memorias',
+    narrator: `Dressa conecta una interfaz al implante de tu pecho.\n\nTres memorias. Las que elegiste tú misma conservar antes de morir.\n\n<strong>Primera:</strong> El rostro de Zerath-9 cuando todavía reía. Hace tanto tiempo que no puede datarse.\n\n<strong>Segunda:</strong> Las coordenadas de un lugar que no existe en ningún mapa del Nexo. Un lugar que tú construiste, que solo tú conoces.\n\n<strong>Tercera:</strong> Una voz. Solo una voz. "No lo hagas sola la próxima vez."\n\nNo reconoces a quien habla.\n\nDressa retira la interfaz. "¿Sabes qué lugar son esas coordenadas?" —pregunta.\n\n"No —dices—. Pero voy a averiguarlo."`,
+    choices: [
+      { text: 'Pides a Dressa que te lleve a esas coordenadas. Ella conoce el sector mejor que nadie.', stats: { tech: 1, spirit: 1 }, tags: ['tech','spirit'], next: 'seed_activate_now' },
+      { text: 'Vas sola. La tercera memoria fue un aviso. No repetirás el error de antes.', stats: { blood: 2, spirit: 1 }, tags: ['blood','spirit'], next: 'ending_survivor' },
+    ]
+  },
+
+  seed_vision_reveal: {
+    chapter: 'III — SANGRE EN EL NEXO',
+    scene: 'Túneles del Nexo · La Verdad',
+    narrator: `Le muestras a Maré-Shin la visión. No con palabras: con el seed mismo, proyectado entre los dos.\n\nVe a las fundadoras de su clan —a las Keres originales— en el momento de la decisión. Ve lo que prometieron. Ve lo que rompieron.\n\nVe cuántos murieron para sostener esa mentira.\n\nY ve, por un segundo, a una mujer con su misma cara en el mundo anterior. Una Keres que eligió diferente.\n\nCuando la visión se apaga, Maré-Shin tiene las manos quietas a los lados y las escamas de fibra óptica completamente oscuras.\n\n"¿Cuánto tiempo llevabas sabiendo esto?" —pregunta.\n\n"Acabo de verlo yo también —dices—. Hace veinte minutos era cadáver."`,
+    choices: [
+      { text: 'La invitas a venir contigo. Juntas, a ver qué queda del Nexo que fue.', stats: { spirit: 3, blood: 1 }, tags: ['spirit','blood'], next: 'ending_architect' },
+      { text: 'La dejas con la verdad y marchas. Es suficiente. Plantar la semilla no obliga a ver crecer el árbol.', stats: { shadow: 2, spirit: 1 }, tags: ['shadow','spirit'], next: 'ending_survivor' },
+    ]
+  },
+
+  options_all: {
+    chapter: 'I — EL DESPERTAR DEL NEXO',
+    scene: 'Subterráneos del Nexo · La Decisión',
+    narrator: `Zerath-9 enumera las opciones con su habitual frialdad:\n\n"<strong>Primera:</strong> Destruyes el implante. Maré-Shin no puede leerte. Pero también pierdes lo que guardaste en él antes de morir." Pausa. "<strong>Segunda:</strong> Te expones a mí. Dejo que mi código de Tejedora se mezcle con el tuyo. Ella leerá dos firmas mezcladas, ininteligibles. Pero yo tendré acceso a todo lo que eres." Pausa larga. "<strong>Tercera:</strong> Vas al reactor ahora mismo, absorbes el seed antes de que llegue, y confías en que su poder te haga ilegible para una extractora de almas ordinaria."\n\nTe mira.\n\n"Ninguna es cómoda. Elegid."`,
+    choices: [
+      { text: 'Destruyes el implante. Lo que guardaste no puede ser más importante que lo que eres ahora.', stats: { blood: 2, spirit: 1 }, tags: ['blood','spirit'], next: 'lab_reactor' },
+      { text: 'Dejas que Zerath-9 se mezcle con tu firma. Hay algo perturbador en la confianza que implica eso.', stats: { spirit: 2, shadow: 1 }, tags: ['spirit','shadow'], next: 'lab_reactor' },
+      { text: 'Vas al reactor. La opción más peligrosa siempre ha sido la tuya.', stats: { blood: 1, force: 2 }, tags: ['blood','force'], next: 'seed_touch' },
+    ]
+  },
+
+  lab_vigil_explanation: {
+    chapter: 'I — EL DESPERTAR DEL NEXO',
+    scene: 'Subterráneos del Nexo · Historia del Nexo',
+    narrator: `"La Vigía Sin Nombre —explica Zerath-9— era el cuarto elemento del equilibrio. Los tres clanes se contrarrestan entre sí por diseño: las Keres controlan las almas, la Orden Ferrha los cuerpos, las Eko-Nacht el tiempo. Pero ningún sistema de tres puntos es estable sin un cuarto." \n\nProjecta un tetaedro holográfico desde sus iris.\n\n"Tú eras el cuarto punto. La que observaba sin pertenecer. Sin ego de clan que defender." Pausa. "Y cuando empezaste a recordar demasiado, el sistema te expulsó. Porque una Vigía que recuerda la verdad... puede colapsar los tres poderes a la vez."`,
+    choices: [
+      { text: 'Asientes. El tiempo se acaba. Al reactor.', stats: { spirit: 1, force: 1 }, tags: ['spirit','force'], next: 'lab_reactor' },
+      { text: '"¿Las Eko-Nacht saben que estoy viva? Si controlan el tiempo, lo saben antes que nadie."', stats: { shadow: 2 }, tags: ['shadow'], next: 'lab_reactor' },
+    ]
+  },
+
+  lab_reject_past: {
+    chapter: 'I — EL DESPERTAR DEL NEXO',
+    scene: 'Subterráneos del Nexo · La Elección',
+    narrator: `"¿Y si no quiero ser la Vigía? ¿Y si quiero elegir quién soy esta vez?"\n\nZerath-9 te mira durante tanto tiempo que el reactor parpadea dos veces.\n\n"Nadie te ha preguntado eso nunca —dice al fin—. En quinientos años." Una pausa. "No sé si es posible. El seed te reconoce. Los clanes te rastrearán sin importar cómo te llames." Otro silencio. "Pero... sería la primera vez que alguien lo elige con los ojos abiertos."\n\nEl reactor pulsa. El tiempo se acaba. Y sin embargo, por una fracción de segundo, algo en el aire cambia.\n\nComo si el Nexo hubiera oído la pregunta y estuviera pensando en la respuesta.`,
+    choices: [
+      { text: 'Eres lo que eres. Al reactor. Elige después de entender.', stats: { spirit: 1, blood: 1 }, tags: ['spirit','blood'], next: 'lab_reactor' },
+      { text: 'Primero el seed. Luego decides. "Zerath, ¿qué sabes de lo que hay más allá del Nexo?"', stats: { spirit: 2, shadow: 1 }, tags: ['spirit','shadow'], next: 'lab_reactor' },
+    ]
+  },
+
+  seed_clever_extract: {
+    chapter: 'I — EL DESPERTAR DEL NEXO',
+    scene: 'Núcleo del Reactor · Ingeniería de Emergencia',
+    narrator: `Buscas en los restos del laboratorio. Un conductor. Algo que aguante tres segundos de plasma frío.\n\nEncuentras una vaina de <span class="tech-term">neo-carbono</span> que formó parte de una columna de contención. La doblas. Encaja en el ángulo exacto.\n\n"¿Eso funcionará?" —pregunta Zerath-9, genuinamente curiosa.\n\n"No lo sé —dices—. Pero es la diferencia entre quemarse y no quemarse, y prefiero intentarlo." Posicionas la vaina. "¿Lista?"\n\nElla ya tiene las manos en los otros dos puntos.\n\n"Siempre —dice."`,
+    isEnding: false,
+    choices: [
+      { text: 'Ejecutas el corte. Tres simultáneos. El seed cae, hibernando, en tu palma.', stats: { tech: 2, spirit: 1 }, tags: ['tech','spirit'], next: 'seed_take' },
+    ]
+  },
+
+  seed_you_burn: {
+    chapter: 'I — EL DESPERTAR DEL NEXO',
+    scene: 'Núcleo del Reactor · El Sacrificio Menor',
+    narrator: `Pones la mano en el núcleo caliente.\n\nEl plasma frío no quema. Congela. Cada circuito de tu red neural en esa zona se apaga como una ciudad que pierde la corriente, barrio a barrio.\n\nTres segundos.\n\nEl seed cae en tu palma libre, hibernando. Pequeño. Cálido.\n\nZerath-9 te mira la mano dañada. "¿Cuánto has perdido?"\n\n"Acceso a los archivos secundarios" —dices, comprobando—. "Algunos recuerdos operativos. Nada que no pueda reconstruir."\n\nElla exhala. "Eres exactamente como eras antes. Eso me tranquiliza y me preocupa a partes iguales."`,
+    choices: [
+      { text: 'Sonríes. "Significa que algo de mí eligió bien la primera vez." Al exterior.', stats: { spirit: 1, blood: 1, force: 1 }, tags: ['spirit','blood','force'], next: 'seed_take' },
+    ]
+  },
+
+  seed_zerath_burns: {
+    chapter: 'I — EL DESPERTAR DEL NEXO',
+    scene: 'Núcleo del Reactor · La Carga de Zerath',
+    narrator: `"Hazlo tú" —dices—. "Mis implantes pueden estar comprometidos. Si el corte falla..."\n\nZerath-9 no responde. Pone la mano en el núcleo caliente sin pausa.\n\nTres segundos de plasma frío.\n\nCuando retira la mano, los nudillos tienen el color de algo que ha dejado de ser completamente orgánico.\n\n"¿Estás...?" —empiezas.\n\n"Completa —dice—. Lo estoy todo el tiempo." Recoge el seed de la consola donde ha caído y te lo tiende. "Lo que tú necesitas, yo no lo necesito. Lo que yo necesito..." Una pausa larga. "Eso es algo en lo que llevas demasiado tiempo sin ayudarme."`,
+    choices: [
+      { text: 'Tomas el seed. "Esta vez será diferente. Te lo prometo." Y te lo crees.', stats: { spirit: 2, blood: 1 }, tags: ['spirit','blood'], next: 'seed_take' },
+    ]
+  },
+
+  lab_morse: {
+    chapter: 'I — EL DESPERTAR DEL NEXO',
+    scene: 'Subterráneos del Nexo · El Suelo que Habla',
+    narrator: `Pones la palma en el suelo. El ritmo se transmite directamente al sistema nervioso.\n\nMorse. Antiguo. Pre-Nexo.\n\n— · — — / — · · / · · — · / · · · · / · — / · · / — — — / · — ·\n\n<em>DESPERTAR. AHORA. REACTOR.</em>\n\nEs un mensaje de hace seis meses. Lo enviaste tú.\n\nTe tenías fe.`,
+    choices: [
+      { text: 'Al reactor. No defraudes a quien eras.', stats: { spirit: 1, force: 1, tech: 1 }, tags: ['spirit','force','tech'], next: 'lab_reactor' },
+    ]
+  },
+
+  lab_cipher_seed_question: {
+    chapter: 'I — EL DESPERTAR DEL NEXO',
+    scene: 'Subterráneos del Nexo · Pregunta Fundamental',
+    narrator: `"¿Qué es el cipher-seed?"\n\nZerath-9 exhala. "Es la memoria del Nexo antes del Protocolo Escarlata. Comprimida. Viva. Si alguien lo lee completo..." Pausa. "...el sistema de poder de los tres clanes pierde su única justificación. Todo lo que construyeron sobre el olvido... se deshace."\n\n"¿Y si lo destruyen?"\n\n"El olvido se vuelve permanente. Lo que fue, nunca habrá existido."\n\nMiras el suelo donde sientes la vibración.\n\n"Entonces no tenemos opción —dices—. Hay que llegar al reactor."`,
+    choices: [
+      { text: 'Al reactor. Ahora.', stats: { spirit: 1, blood: 1 }, tags: ['spirit','blood'], next: 'lab_reactor' },
+    ]
+  },
+
+  implant_open: {
+    chapter: 'I — EL DESPERTAR DEL NEXO',
+    scene: 'Subterráneos del Nexo · El Archivo Interior',
+    narrator: `Zerath-9 conecta un <span class="tech-term">cipher-key</span> al implante.\n\nTres archivos. Tres recuerdos que tú misma seleccionaste antes de morir.\n\nEl primero es una sala vacía en un lugar que no reconoces. El segundo es la ecuación completa del Protocolo Escarlata —el código que usaron para borrar la memoria colectiva—. El tercero es un nombre: <strong>Eko-Zara</strong>. El de la cuarta fundadora. La que no está en ningún registro. La que, según los datos, nunca existió.\n\n"Eko-Zara —repites en voz alta—. ¿La conoces?"\n\nZerath-9 tarda demasiado en responder.\n\n"Era mi madre."`,
+    choices: [
+      { text: 'Al reactor. Las respuestas pueden esperar. El seed, no.', stats: { spirit: 1, shadow: 1 }, tags: ['spirit','shadow'], next: 'lab_reactor' },
+    ]
+  },
+
+  implant_who_knows: {
+    chapter: 'I — EL DESPERTAR DEL NEXO',
+    scene: 'Subterráneos del Nexo · Paranoia Necesaria',
+    narrator: `"¿Quién sabe que cargo el implante?"\n\n"Dressa, que lo instaló —dice Zerath-9—. Yo, que te ayudé a diseñarlo. Y quien te mató, que intentó encontrarlo y falló." Pausa. "Las Keres saben que existe algo. No saben qué es exactamente."\n\n"¿Y las Eko-Nacht?"\n\nZerath-9 cierra los ojos un segundo. "Las Eko-Nacht saben siempre todo. La pregunta es si les importa."`,
+    choices: [
+      { text: 'Al reactor. Información suficiente por ahora.', stats: { shadow: 1, tech: 1 }, tags: ['shadow','tech'], next: 'lab_reactor' },
+    ]
+  },
+
+  door_open: {
+    chapter: 'I — EL DESPERTAR DEL NEXO',
+    scene: 'Subterráneos del Nexo · Detrás de la Puerta',
+    narrator: `La puerta se abre.\n\nDentro, en posición de meditación con las piernas cruzadas y la espalda recta, hay una chica. No mayor de dieciséis años en apariencia. Piel traslúcida donde se ven los circuitos bioluminiscentes bajo la dermis. Ojos abiertos que no parpadean.\n\nUna <span class="tech-term">ghost-child</span>: un ser que existe entre el estado digital y el físico, que las Keres cazan para procesar su consciencia indivisa.\n\nTe mira.\n\n"Sabía que vendrías —dice—. El seed me lo dijo." Una pausa. "Soy <strong>Nyx-Ori</strong>. Y sé dónde está el tercer punto de anclaje del reactor."`,
+    choices: [
+      { text: '"Ven con nosotras." Sin dudar.', stats: { spirit: 2, force: 1 }, tags: ['spirit','force'], next: 'lab_reactor' },
+      { text: '"¿Cómo sé que no eres una trampa de las Keres?" Primero verificar.', stats: { shadow: 2 }, tags: ['shadow'], next: 'lab_reactor' },
+    ]
+  },
+
+  door_call: {
+    chapter: 'I — EL DESPERTAR DEL NEXO',
+    scene: 'Subterráneos del Nexo · El Primer Contacto',
+    narrator: `"¿Quién está ahí?" —llamas a través de la puerta sellada.\n\nUna voz joven. Tranquila. Como alguien que lleva mucho tiempo sin miedo porque ya no le queda nada que perder.\n\n"La que guardaste. La que prometiste volver a buscar."`,
+    choices: [
+      { text: 'Abres la puerta.', stats: { spirit: 1, blood: 1 }, tags: ['spirit','blood'], next: 'door_open' },
+    ]
+  },
+
+  door_scan: {
+    chapter: 'I — EL DESPERTAR DEL NEXO',
+    scene: 'Subterráneos del Nexo · El Escaneo',
+    narrator: `Zerath-9 amplía los iris-holo y escanea.\n\n"Una firma digital-orgánica híbrida —dice—. Ghost-child. Joven. No hay patrones de trampa ni señal activa al exterior." Una pausa. "Lleva mucho tiempo aquí. Meses. Sobreviviendo sola."`,
+    choices: [
+      { text: 'Abres la puerta.', stats: { tech: 1, spirit: 1 }, tags: ['tech','spirit'], next: 'door_open' },
+    ]
+  },
+
+  mareshin_history: {
+    chapter: 'I — EL DESPERTAR DEL NEXO',
+    scene: 'Subterráneos del Nexo · Registro Histórico',
+    narrator: `"¿Qué hice la primera vez que me enfrenté a Maré-Shin?"\n\nZerath-9 hace un sonido que podría ser una risa muy contenida.\n\n"Le pediste que te extrajera el alma tú misma —dice—. Como test. Para ver si era posible resistirlo." Pausa. "Lo resististe. Ella quedó en shock durante tres días." Otra pausa. "Fue hace doscientos años. Desde entonces, Maré-Shin te buscó específicamente. No por las Keres. Por curiosidad personal."`,
+    choices: [
+      { text: '"Entonces no me teme. Me fastidia." Al reactor.', stats: { shadow: 1, spirit: 1 }, tags: ['shadow','spirit'], next: 'lab_reactor' },
+    ]
+  },
+
+  seed_defensive_mode: {
+    chapter: 'I — EL DESPERTAR DEL NEXO',
+    scene: 'Subterráneos del Nexo · Modo Defensa',
+    narrator: `"¿El seed tiene modo defensivo?"\n\nZerath-9 te mira fijamente. "Técnicamente... sí. Si alguien con firma compatible lo activa en resonancia de repulsión, emite una señal que hace ilegibles todas las firmas en un radio de veinte metros. Las Keres no pueden rastrear lo que no pueden leer."\n\n"¿Quién tiene firma compatible?"\n\nSilencio.\n\n"Tú —dice al fin—. Solo tú."`,
+    choices: [
+      { text: 'Al reactor. Activas el modo defensivo al tocar el seed.', stats: { tech: 2, spirit: 1 }, tags: ['tech','spirit'], next: 'seed_touch' },
+    ]
+  },
+
+  zerath_lied: {
+    chapter: 'I — EL DESPERTAR DEL NEXO',
+    scene: 'Subterráneos del Nexo · La Verdad de Zerath',
+    narrator: `"¿Sabías que el seed era activo? ¿Que podía moverse?"\n\nZerath-9 no desvía la mirada. "Sí."\n\nUna sola palabra. Sin excusa.\n\n"¿Por qué no me lo dijiste?"\n\n"Porque si lo sabías, habrías tomado una decisión basada en el miedo." Pausa. "Y necesitaba que actuaras desde la certeza." Otro silencio. "Sé que no es razón suficiente. Pero es la que tengo."`,
+    choices: [
+      { text: '"Lo procesaré después. Al reactor." La rabia puede esperar. El seed, no.', stats: { force: 1, blood: 1 }, tags: ['force','blood'], next: 'lab_reactor' },
+      { text: '"¿Cuántas veces más me has mentido por mi bien?" Necesitas saberlo.', stats: { spirit: 2 }, tags: ['spirit'], next: 'lab_reactor' },
+    ]
+  },
+
+  seed_bluff: {
+    chapter: 'III — SANGRE EN EL NEXO',
+    scene: 'Túneles del Nexo · El Farol',
+    narrator: `"El seed ya está parcialmente activado —mientes—. Si lo detienes ahora, el Nexo colapsa en cuarenta y ocho horas. Todos los servidores. Todos los consciencias cifradas."\n\nMaré-Shin te lee. Su fibra óptica trabaja a toda velocidad.\n\nY entonces sonríe. El primer gesto genuinamente humano que le has visto.\n\n"Estás mintiendo —dice—. Pero lo haces tan bien..." Un gesto de respeto extrañísimo en ella. "¿Qué estás ofreciendo de verdad?"`,
+    choices: [
+      { text: '"La verdad. Que es peor que la mentira y mejor que el olvido."', stats: { spirit: 2, shadow: 1 }, tags: ['spirit','shadow'], next: 'seed_vision_reveal' },
+      { text: '"Tu libertad de las Keres. A cambio de la tuya de mí."', stats: { shadow: 2, blood: 1 }, tags: ['shadow','blood'], next: 'mareshin_ally' },
+    ]
+  },
+
+  seed_shared_custody: {
+    chapter: 'III — SANGRE EN EL NEXO',
+    scene: 'Túneles del Nexo · El Acuerdo',
+    narrator: `Maré-Shin estudia la propuesta.\n\nAcceso de lectura limitada. El seed sigue siendo tuyo. Pero ella puede consultarlo —bajo condiciones— para reconstruir lo que sus extracciones de almas han borrado durante siglos.\n\n"¿Por qué confiarías en mí?" —pregunta.\n\n"No confío en ti —dices—. Confío en que lo que viste en el seed es suficiente para que quieras más." Pausa. "Y la única forma de tener más... es que yo siga viva."`,
+    choices: [
+      { text: 'El acuerdo se sella. Sigues adelante, con una aliada improbable.', stats: { shadow: 2, spirit: 1, tech: 1 }, tags: ['shadow','spirit','tech'], next: 'ending_architect' },
+    ]
+  },
+
+  sacrifice_buys_time: {
+    chapter: 'III — SANGRE EN EL NEXO',
+    scene: 'Túneles del Nexo · El Tiempo Comprado',
+    narrator: `Maré-Shin avanza hacia ti. Sus guanteletes de extracción proyectan filamentos de luz que buscan tu firma neural.\n\nTú retrocedes. Los desvías. Los filamentos son precisos; tú, impredecible.\n\nDetrás de ti, oyes los pasos de Zerath-9 alejándose. Rápidos. Profesionales. Se va.\n\nBien.\n\nUn filamento te roza en el hombro. El dolor es extraño: como recordar algo que no viviste. La firma de otra persona superponiéndose a la tuya.\n\n"Eres interesante —dice Maré-Shin, sin detenerse—. Las otras Vigías se defendían mejor. Tú... te dejas tocar."`,
+    choices: [
+      { text: '"Me dejo tocar porque quiero que me leas." Juegas tu última carta.', stats: { spirit: 2, shadow: 2 }, tags: ['spirit','shadow'], next: 'seed_vision_reveal' },
+      { text: 'Corres. Zerath-9 tiene el seed. Tú, libertad de movimiento. Dividid y sobrevivid.', stats: { force: 2, shadow: 1 }, tags: ['force','shadow'], next: 'ending_survivor' },
+    ]
+  },
+
+  sacrifice_full: {
+    chapter: 'III — SANGRE EN EL NEXO',
+    scene: 'Túneles del Nexo · El Gesto',
+    narrator: `"¡Zerath, corre!"\n\nY por primera vez en siglos, Zerath-9 obedece a alguien.\n\nOyes sus pasos alejándose. Sientes el seed alejarse de tu radio de percepción. Están a salvo. Al menos por ahora.\n\nMaré-Shin se detiene frente a ti. Sin el seed como objetivo inmediato, sus guanteletes pierden urgencia.\n\n"¿Eso fue todo tu plan?" —pregunta.\n\n"Era el plan correcto —dices—. Me importa más ella que yo."`,
+    choices: [
+      { text: '"¿Qué harías tú si pudieras importarte alguien más que tu misión?"', stats: { spirit: 3, shadow: 1 }, tags: ['spirit','shadow'], next: 'mareshin_ally' },
+      { text: 'Atacas. Sin el seed, sin Zerath, sin nada que perder. Solo tú y cuatro siglos de instinto.', stats: { force: 2, blood: 2 }, tags: ['force','blood'], next: 'confrontation_fight' },
+    ]
+  },
+
+  ferrha_keres_access: {
+    chapter: 'III — SANGRE EN EL NEXO',
+    scene: 'Sector Ferrha · Negociación',
+    narrator: `"¿Acceso al territorio Keres?" Dressa suelta una herramienta y te mira directamente por primera vez. "Tengo una ruta de mantenimiento que cruza el límite dos veces al ciclo. Invisible a sus escáneres porque usa frecuencias de cuerpo orgánico, no digital." Pausa. "Pero el precio es escucharme cinco minutos."`,
+    choices: [
+      { text: '"Habla."', stats: { spirit: 1, shadow: 1 }, tags: ['spirit','shadow'], next: 'ferrha_memories' },
+    ]
+  },
+
+  ferrha_upgrade: {
+    chapter: 'III — SANGRE EN EL NEXO',
+    scene: 'Sector Ferrha · Mejora de Sistema',
+    narrator: `Dressa examina tus implantes con una eficiencia que solo se consigue con décadas de práctica.\n\n"Puedo darte tres mejoras en el tiempo que tienes —dice—. Un refuerzo neural en la corteza de combate, un amplificador de firma para que el seed te lea más fácilmente, o un bloqueador de extracción de almas para que Maré-Shin no pueda tocarte." Pausa. "Solo hay tiempo para una."`,
+    choices: [
+      { text: 'Refuerzo neural de combate. Lo que viene va a necesitar fuerza.', stats: { force: 2, tech: 1 }, tags: ['force','tech'], next: 'confrontation_fight' },
+      { text: 'Amplificador de firma. Si el seed es la clave, quieres que te reconozca mejor.', stats: { tech: 2, spirit: 1 }, tags: ['tech','spirit'], next: 'seed_activate_now' },
+      { text: 'Bloqueador de extracción. Maré-Shin no puede ser tu mayor vulnerabilidad.', stats: { tech: 1, shadow: 1 }, tags: ['tech','shadow'], next: 'confrontation_negotiate' },
+    ]
+  },
+
+  mareshin_defect: {
+    chapter: 'III — SANGRE EN EL NEXO',
+    scene: 'Túneles del Nexo · La Desconexión',
+    narrator: `El enlace neural de Maré-Shin con las Keres se rompe con un sonido como cristal astillándose.\n\nElla cae de rodillas. No de dolor: de silencio repentino. Cuatro siglos de voces del clan desapareciendo en un segundo.\n\nSus soldados-sombra se miran entre sí, desorientadas. Sin la voz de Maré-Shin como mediadora con el clan, no saben qué hacer.\n\n"¿Qué he hecho?" —susurra ella.\n\n"Algo que tenías que hacer hace mucho tiempo —dices—. La pregunta es qué haces ahora."`,
+    choices: [
+      { text: 'La ayudas a levantarse. Las dos necesitan seguir adelante.', stats: { spirit: 2, force: 1 }, tags: ['spirit','force'], next: 'ending_architect' },
+      { text: 'La dejas. Ella tiene su camino. Tú tienes el tuyo.', stats: { shadow: 1, blood: 1 }, tags: ['shadow','blood'], next: 'ending_survivor' },
+    ]
+  },
+
+  public_signal: {
+    chapter: 'II — EL CÓDIGO EN LA SANGRE',
+    scene: 'Nexo · Señal Abierta',
+    narrator: `Emites la señal desde el seed mismo. Un pulso de información que cruza todas las frecuencias del Nexo.\n\nNombre: Axara-Null. Ubicación: en movimiento. Mensaje: el seed existe, está activo, y se ofrece a ser leído por cualquier ser del Nexo que lo solicite libremente.\n\nZerath-9 te mira como si hubieras abierto todas las ventanas de un edificio en llamas.\n\n"Ahora todo el mundo sabe que estás viva."\n\n"Sí —dices—. Y ahora las Keres no pueden matarme en silencio. Todo el Nexo está mirando."`,
+    choices: [
+      { text: 'Esperas. En un terreno neutral. Quien llegue primero, define la siguiente jugada.', stats: { spirit: 1, shadow: 2 }, tags: ['spirit','shadow'], next: 'confrontation_negotiate' },
+    ]
+  },
+
+  lab_lie: {
+    chapter: 'I — EL DESPERTAR DEL NEXO',
+    scene: 'Subterráneos del Nexo · La Máscara',
+    narrator: `"Todo. Recuerdo todo."\n\nEs mentira. Pero la dices con la convicción de quien ya ha practicado esa mentira suficientes veces.\n\nZerath-9 te estudia. "Mientes —dice al fin—. Pero lo haces bien." Una pausa. "Me alegra que algunas cosas no hayan cambiado."`,
+    choices: [
+      { text: 'Sonríes. "Al reactor. Tenemos tiempo que perder." Irónica.', stats: { shadow: 2 }, tags: ['shadow'], next: 'lab_reactor' },
+    ]
+  },
+
+  lab_truth: {
+    chapter: 'I — EL DESPERTAR DEL NEXO',
+    scene: 'Subterráneos del Nexo · La Honestidad',
+    narrator: `"Nada. Pero sé lo suficiente."\n\nZerath-9 exhala. Algo en ella se relaja, aunque no es visible en su postura. "Eso es más honesto que cualquier cosa que me hayas dicho en los últimos cien años." Pausa. "Bien. Entonces empezamos desde cero. Tú no sabes nada. Yo sé demasiado. Y entre las dos, a lo mejor salimos de esta."`,
+    choices: [
+      { text: '"Al reactor. Explícame de camino." La acción y la información, en paralelo.', stats: { spirit: 2, tech: 1 }, tags: ['spirit','tech'], next: 'lab_reactor' },
+    ]
+  },
+
+  lab_present_focus: {
+    chapter: 'I — EL DESPERTAR DEL NEXO',
+    scene: 'Subterráneos del Nexo · El Ahora',
+    narrator: `"¿Qué me importa lo que era? ¿Qué hace el seed si lo activo?"\n\nZerath-9 te mira durante un segundo. Luego: "Restaura la memoria colectiva. La de todos los seres del Nexo. La que fue borrada." Pausa. "Y te consume entera en el proceso. Al menos en teoría."\n\n"¿En teoría?"\n\n"Nunca se ha activado. No he visto qué pasa de verdad."`,
+    choices: [
+      { text: '"Entonces vamos a verlo." Al reactor.', stats: { blood: 2, spirit: 1 }, tags: ['blood','spirit'], next: 'lab_reactor' },
+    ]
+  },
+
+};
+
+// ══ ENGINE FUNCTIONS ══════════════════════════════════════════
+
+function startGame() {
+  document.getElementById('intro-screen').style.display = 'none';
+  document.getElementById('game-screen').style.display = 'block';
+  renderHUD();
+  loadNode('start');
+}
+
+function renderHUD() {
+  const bar = document.getElementById('stats-bar');
+  bar.innerHTML = Object.entries(STATS).map(([key, stat]) => `
+    <div class="stat-chip">
+      <div class="stat-dot" style="background:${stat.color}"></div>
+      <span class="stat-name">${stat.name}</span>
+      <span class="stat-val" id="stat-${key}" style="color:${stat.color}">0</span>
+    </div>
+  `).join('');
+}
+
+function updateStatDisplay() {
+  Object.entries(playerStats).forEach(([key, val]) => {
+    const el = document.getElementById(`stat-${key}`);
+    if (el) el.textContent = val;
+  });
+}
+
+function showStatGain(gains) {
+  const gainText = Object.entries(gains)
+    .filter(([,v]) => v > 0)
+    .map(([k,v]) => `+${v} ${STATS[k].name}`)
+    .join(' · ');
+  if (!gainText) return;
+  const toast = document.createElement('div');
+  toast.className = 'stat-gain-toast';
+  toast.innerHTML = `<span style="color:var(--accent-violet-glow)">▸</span> ${gainText}`;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2100);
+}
+
+function applyStats(stats) {
+  if (!stats) return;
+  Object.entries(stats).forEach(([key, val]) => {
+    if (playerStats[key] !== undefined) playerStats[key] += val;
+  });
+  updateStatDisplay();
+}
+
+function getTraitFromStats() {
+  const s = playerStats;
+  const max = Math.max(s.force, s.shadow, s.tech, s.spirit, s.blood);
+  if (max === 0) return null;
+  if (s.spirit >= max) return 'VIGÍA RESONANTE';
+  if (s.shadow >= max) return 'TEJEDORA DE SOMBRAS';
+  if (s.tech >= max) return 'ARQUITECTA DEL CÓDIGO';
+  if (s.force >= max) return 'GUERRERA DEL VACÍO';
+  if (s.blood >= max) return 'PORTADORA DE SANGRE';
+  return null;
+}
+
+function loadNode(nodeId) {
+  const node = STORY[nodeId];
+  if (!node) { console.error('Node not found:', nodeId); return; }
+  currentNode = nodeId;
+
+  if (node.isEnding && node.endingType) {
+    showEnding(node);
+    return;
+  }
+
+  const chapterBadge = document.getElementById('chapter-badge');
+  if (chapterBadge) chapterBadge.textContent = node.chapter ? node.chapter.split('—')[0].trim() : '';
+
+  const content = document.getElementById('scene-content');
+  content.innerHTML = '';
+
+  const progress = getProgressPercent(nodeId);
+
+  content.innerHTML = `
+    <div class="chapter-progress fade-in">
+      <div class="chapter-progress-fill" style="width:${progress}%"></div>
+    </div>
+    <div class="scene-header fade-in">
+      <div class="scene-tag">${node.chapter || ''}</div>
+      <div class="scene-title">${node.scene || ''}</div>
+    </div>
+    <div class="narrator-container fade-in">
+      <div class="narrator-avatar">🧿</div>
+      <div class="narrator-bubble">
+        <div class="narrator-name">✦ ZERATH-9 · TEJEDORA DEL VACÍO</div>
+        <div class="narrator-text" id="narrator-text"></div>
+      </div>
+    </div>
+    ${node.lore ? `
+    <div class="lore-scroll fade-in">
+      <div class="lore-scroll-label">⬡ Archivo del Nexo</div>
+      ${node.lore}
+    </div>` : ''}
+    <div class="rune-divider fade-in"><span>✦</span></div>
+  `;
+
+  document.getElementById('choices-container').style.display = 'none';
+
+  typeText('narrator-text', node.narrator, () => {
+    renderChoices(node.choices);
+  });
+}
+
+function getProgressPercent(nodeId) {
+  const earlyNodes = ['start', 'awakening_force', 'awakening_shadow', 'awakening_tech', 'awakening_spirit'];
+  const midNodes = ['lab_reactor', 'lab_implant', 'lab_zerath_past', 'lab_sealed_door', 'seed_touch', 'seed_extract', 'seed_take'];
+  const lateNodes = ['confrontation_fight', 'confrontation_negotiate', 'confrontation_sacrifice', 'seed_activate_now', 'alliance_ferrha'];
+  const endNodes = ['ending_martyr', 'ending_architect', 'ending_survivor'];
+  if (endNodes.includes(nodeId)) return 100;
+  if (lateNodes.includes(nodeId)) return 75;
+  if (midNodes.includes(nodeId)) return 50;
+  if (earlyNodes.includes(nodeId)) return 20;
+  return 40;
+}
+
+function typeText(containerId, text, onComplete) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+
+  const processed = text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/\n/g, '<br>');
+
+  const wrapped = `<p>${processed}</p>`;
+  const strippedForTyping = wrapped.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+  
+  el.innerHTML = '';
+  let i = 0;
+  
+  const cursor = document.createElement('span');
+  cursor.className = 'typing-cursor';
+  el.appendChild(cursor);
+
+  const speed = 18;
+  
+  function type() {
+    if (i >= strippedForTyping.length) {
+      el.innerHTML = wrapped;
+      if (onComplete) onComplete();
+      return;
+    }
+    i += Math.ceil(strippedForTyping.length / 200);
+    if (i > strippedForTyping.length) i = strippedForTyping.length;
+    const partial = strippedForTyping.substring(0, i);
+    el.innerHTML = `<p>${partial}</p>`;
+    el.appendChild(cursor);
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    typingTimeout = setTimeout(type, speed);
+  }
+
+  // Allow click to skip typing
+  el.addEventListener('click', () => {
+    if (typingTimeout) { clearTimeout(typingTimeout); typingTimeout = null; }
+    el.innerHTML = wrapped;
+    if (onComplete) onComplete();
+  }, { once: true });
+
+  type();
+}
+
+function renderChoices(choices) {
+  if (!choices || choices.length === 0) return;
+
+  const container = document.getElementById('choices-container');
+  const grid = document.getElementById('choices-grid');
+
+  grid.innerHTML = choices.map((choice, i) => `
+    <button class="choice-btn" onclick="makeChoice(${i})">
+      <span class="choice-index">[${String.fromCharCode(65 + i)}]</span>
+      <span class="choice-text">${choice.text}</span>
+      <span class="choice-tags">
+        ${(choice.tags || []).map(t => `<span class="choice-tag ${t}">${t.toUpperCase()}</span>`).join('')}
+      </span>
+    </button>
+  `).join('');
+
+  container.style.display = 'block';
+  container.classList.add('fade-in');
+  container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+  // Store current choices globally
+  window._currentChoices = choices;
+}
+
+function makeChoice(index) {
+  const choices = window._currentChoices;
+  if (!choices || !choices[index]) return;
+
+  const choice = choices[index];
+  choiceHistory.push({ node: currentNode, choice: index, text: choice.text });
+
+  if (choice.stats) {
+    applyStats(choice.stats);
+    showStatGain(choice.stats);
+  }
+
+  const trait = getTraitFromStats();
+  if (trait && !traits.includes(trait)) {
+    traits.push(trait);
+  }
+
+  document.getElementById('choices-container').style.display = 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  setTimeout(() => {
+    loadNode(choice.next);
+  }, 300);
+}
+
+function showEnding(node) {
+  document.getElementById('game-screen').style.display = 'none';
+  const screen = document.getElementById('ending-screen');
+  screen.style.display = 'block';
+
+  const dominantStat = Object.entries(playerStats).sort(([,a],[,b]) => b - a)[0];
+
+  screen.innerHTML = `
+    <div class="fade-in">
+      <div class="intro-rune">⚜</div>
+      <div class="intro-title ending-title" style="font-size:clamp(1.5rem,3vw,2.5rem); margin-bottom:16px; color: var(--text-primary); background: none; -webkit-background-clip: unset; background-clip: unset;">
+        ${node.endingTitle || 'FIN'}
+      </div>
+      <div class="narrator-container" style="max-width:700px; margin: 0 auto 40px;">
+        <div class="narrator-avatar">🧿</div>
+        <div class="narrator-bubble">
+          <div class="narrator-name">✦ ZERATH-9 · EPÍLOGO</div>
+          <div class="narrator-text">${node.narrator.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>').replace(/\n/g,'<br>')}</div>
+        </div>
+      </div>
+
+      <div class="lore-scroll" style="max-width:600px; margin: 0 auto 40px; text-align:left;">
+        <div class="lore-scroll-label">⬡ Tu Veredicto</div>
+        ${node.endingDesc || ''}
+      </div>
+
+      <div style="font-family:var(--font-mono); font-size:0.7rem; color:var(--text-muted); margin-bottom:20px; letter-spacing:0.3em; text-transform:uppercase;">
+        Atributos finales
+      </div>
+      <div class="final-stats">
+        ${Object.entries(playerStats).map(([key, val]) => `
+          <div class="final-stat-card">
+            <div class="final-stat-name">${STATS[key].name}</div>
+            <div class="final-stat-val" style="color:${STATS[key].color}">${val}</div>
+          </div>
+        `).join('')}
+      </div>
+
+      ${traits.length > 0 ? `
+      <div style="margin-bottom:40px;">
+        <div style="font-family:var(--font-mono); font-size:0.65rem; color:var(--text-muted); letter-spacing:0.3em; text-transform:uppercase; margin-bottom:12px;">Rasgos desarrollados</div>
+        ${traits.map(t => `<span class="trait-reveal">${t}</span>`).join('')}
+      </div>` : ''}
+
+      <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+        <button class="btn-restart" onclick="restartGame()">▸ Reiniciar desde el principio</button>
+      </div>
+
+      <div style="margin-top:60px; font-family:var(--font-mono); font-size:0.6rem; color:var(--text-muted); letter-spacing:0.4em; text-transform:uppercase;">
+        CIPHER VEIL · Volumen I · La Última Bruja del Nexo
+      </div>
+    </div>
+  `;
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restartGame() {
+  playerStats = { force: 0, shadow: 0, tech: 0, spirit: 0, blood: 0 };
+  currentNode = 'start';
+  choiceHistory = [];
+  traits = [];
+  window._currentChoices = null;
+
+  document.getElementById('ending-screen').style.display = 'none';
+  document.getElementById('intro-screen').style.display = 'flex';
+  window.scrollTo({ top: 0 });
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  const choices = window._currentChoices;
+  if (!choices) return;
+  const idx = e.key.toUpperCase().charCodeAt(0) - 65;
+  if (idx >= 0 && idx < choices.length) {
+    makeChoice(idx);
+  }
+  if (e.key === ' ' || e.key === 'Enter') {
+    const text = document.getElementById('narrator-text');
+    if (text) text.click();
+  }
+});
+</script>
+</body>
+</html>
